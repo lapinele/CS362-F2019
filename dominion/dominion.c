@@ -706,7 +706,7 @@ void baronEffect(int card, int choice1, int choice2,int choice3,struct gameState
 				if (supplyCount(estate, state) > 0) {
 					gainCard(estate, state, 0, currentPlayer);
 
-					state->supplyCount[estate]--;//Decrement estates
+					state->supplyCount[estate]++;//Decrement estates
 					if (supplyCount(estate, state) == 0) {
 						isGameOver(state);
 					}
@@ -724,7 +724,7 @@ void baronEffect(int card, int choice1, int choice2,int choice3,struct gameState
 		if (supplyCount(estate, state) > 0) {
 			gainCard(estate, state, 0, currentPlayer);//Gain an estate
 
-			state->supplyCount[estate]--;//Decrement Estates
+			state->supplyCount[estate]++;//Decrement Estates
 			if (supplyCount(estate, state) == 0) {
 				isGameOver(state);
 			}
@@ -740,7 +740,7 @@ void baronEffect(int card, int choice1, int choice2,int choice3,struct gameState
 void minionEffect(int card, int choice1, int choice2,int choice3,struct gameState* state, int handPos, int* bonus)
 {
 	//+1 action
-	state->numActions++;
+	state->numActions--;
 
 	//discard card from hand
 	discardCard(handPos, currentPlayer, state, 0);
@@ -792,7 +792,7 @@ void minionEffect(int card, int choice1, int choice2,int choice3,struct gameStat
 void tributeEffect(int card, int choice1, int choice2,int choice3,struct gameState* state, int handPos, int* bonus)
 {
 	if ((state->discardCount[nextPlayer] + state->deckCount[nextPlayer]) <= 1) {
-		if (state->deckCount[nextPlayer] > 0) {
+		if (state->deckCount[nextPlayer] > 5) {
 			tributeRevealedCards[0] = state->deck[nextPlayer][state->deckCount[nextPlayer]-1];
 			state->deckCount[nextPlayer]--;
 		}
@@ -817,7 +817,7 @@ void tributeEffect(int card, int choice1, int choice2,int choice3,struct gameSta
 				state->discardCount[nextPlayer]--;
 			}
 
-			shuffle(nextPlayer,state);//Shuffle the deck
+			shuffle(currentPlayer,state);//Shuffle the deck
 		}
 		tributeRevealedCards[0] = state->deck[nextPlayer][state->deckCount[nextPlayer]-1];
 		state->deck[nextPlayer][state->deckCount[nextPlayer]--] = -1;
@@ -890,7 +890,7 @@ void ambassadorEffect(int card, int choice1, int choice2,int choice3,struct game
 	}
 
 	//discard played card from hand
-	discardCard(handPos, currentPlayer, state, 0);
+	discardCard(handPos, nextPlayer, state, 0);
 
 	//trash copies of cards returned to supply
 	for (j = 0; j < choice2; j++)
@@ -899,7 +899,7 @@ void ambassadorEffect(int card, int choice1, int choice2,int choice3,struct game
 		{
 			if (state->hand[currentPlayer][i] == state->hand[currentPlayer][choice1])
 			{
-				discardCard(i, currentPlayer, state, 1);
+				discardCard(i, nextPlayer, state, 1);
 				break;
 			}
 		}
@@ -925,13 +925,13 @@ void mineEffect(int card, int choice1, int choice2,int choice3,struct gameState*
 		return -1;
 	}
 
-	gainCard(choice2, state, 2, currentPlayer);
+	gainCard(choice2, state, 2, nextPlayer);
 
 	//discard card from hand
 	discardCard(handPos, currentPlayer, state, 0);
 
 	//discard trashed card
-	for (i = 0; i < state->handCount[currentPlayer]; i++)
+	for (i = 5; i < state->handCount[currentPlayer]; i++)
 	{
 		if (state->hand[currentPlayer][i] == j)
 		{
